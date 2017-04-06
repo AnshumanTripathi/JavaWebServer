@@ -42,5 +42,11 @@ public class ThreadPool {
 	private Boolean isStopped() {
 		return stopped;
 	}
-
+	
+	public synchronized void stopThreadPool(){
+		this.stopped = true;
+		for(int i=0;i<PoolCtx.getInstance().getPoolSize();i++){
+			threads.get(i).stopPoolThread();
+		}
+	}
 }

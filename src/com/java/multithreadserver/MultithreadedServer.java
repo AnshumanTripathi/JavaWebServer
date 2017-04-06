@@ -3,12 +3,15 @@ package com.java.multithreadserver;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MultithreadedServer implements Runnable {
 
 	private ServerSocket serverSocket = null;
 	private int serverPort;
 	private boolean isClosed = false;
+	private ExecutorService threadPool = Executors.newFixedThreadPool(10);
 
 	public MultithreadedServer(int serverPort) {
 		this.serverPort = serverPort;
@@ -30,9 +33,11 @@ public class MultithreadedServer implements Runnable {
 				}
 			}
 			if (client != null) {
-				new Thread(new ServerWorkerThread(client)).start();
+				this.threadPool.execute(new ServerWorkerThread(client));
 			}
 		}
+		System.out.println("Closing thread pool.");
+		this.threadPool.shutdown();
 	}
 
 	private boolean isClosed() {
