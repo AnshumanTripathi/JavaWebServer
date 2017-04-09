@@ -6,17 +6,26 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.java.serverctx.ServerCtx;
+
 public class MultithreadedServer implements Runnable {
 
 	private ServerSocket serverSocket = null;
-	private int serverPort;
 	private boolean isClosed = false;
-	private ExecutorService threadPool = Executors.newFixedThreadPool(10);
+	private ExecutorService threadPool;
 
-	public MultithreadedServer(int serverPort) {
-		this.serverPort = serverPort;
+	public MultithreadedServer(int serverPort, int threadPoolSize) {
+		this.threadPool = Executors.newFixedThreadPool(threadPoolSize);
+		ServerCtx.getInstance().setPort(serverPort);
 	}
 
+	public MultithreadedServer(int serverPort, String root, int threadPoolSize) {
+		this.threadPool = Executors.newFixedThreadPool(threadPoolSize);
+		ServerCtx.getInstance().setServerRoot(root);
+		ServerCtx.getInstance().setPort(serverPort);
+	}
+	
+	
 	@Override
 	public void run() {
 		startServer();
@@ -46,8 +55,8 @@ public class MultithreadedServer implements Runnable {
 
 	private void startServer() {
 		try {
-			this.serverSocket = new ServerSocket(this.serverPort);
-			System.out.println("Mulithreaded Server Started on port "+this.serverPort);
+			this.serverSocket = new ServerSocket(ServerCtx.getInstance().getPort());
+			System.out.println("Mulithreaded Server Started on port "+ServerCtx.getInstance().getPort());
 		} catch (IOException e) {
 			System.err.println("Exception Occured while starting server!\n" + e.getMessage());
 		}
