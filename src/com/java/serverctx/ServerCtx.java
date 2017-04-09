@@ -1,7 +1,13 @@
 package com.java.serverctx;
 
+/*
+ * Author: Anshuman Tripathi
+ * 
+ * Server Contextual Data that can be used during Server runtime
+ */
 public class ServerCtx {
 	private static ServerCtx instance = null;
+	private static Object threadSafe = new Object(); // Object that helps achieve singleton thread safety
 	private String serverRoot;
 	private int port;
 	
@@ -9,9 +15,10 @@ public class ServerCtx {
 	
 	public static ServerCtx getInstance(){
 		if(instance == null){
-			synchronized (instance) {
+			synchronized (threadSafe) {
 				if(instance == null)
-					return new ServerCtx();
+					instance = new ServerCtx();
+					return instance;
 			}
 		}
 		return instance;

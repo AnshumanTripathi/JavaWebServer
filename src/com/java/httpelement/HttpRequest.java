@@ -11,21 +11,33 @@ import java.util.Map;
 
 public class HttpRequest {
 
-	private static Map<String, String> headers = new HashMap<String, String>();
+	private static Map<String, String> headers = new HashMap<String, String>(); // Can
+																				// be
+																				// replaced
+																				// in
+																				// with
+																				// a
+																				// ConcurrentHashMap
+																				// for
+																				// further
+																				// thread
+																				// safety
 	private static String method;
 	private static String protocol;
 	private static String path;
-	private static List<String> body = new ArrayList<String>(); 
-	
+	private static List<String> body = new ArrayList<String>();
+
 	private HttpRequest() {
 	}
 
+	// Parse and return HTTP Reponse from Client input stream
 	public static HttpRequest parseRequest(InputStream in) throws IOException {
 		HttpRequest request = new HttpRequest();
 		BufferedReader buff = new BufferedReader(new InputStreamReader(in));
 		String line = buff.readLine();
 
-		String[] data = line.split("");
+		// Check for protocol, HTTP method, and the url path
+		String[] data = line.split(" ");
 
 		if (data.length != 3) {
 			throw new IOException("Cannot Parse HTTP Request.");
@@ -40,15 +52,30 @@ public class HttpRequest {
 		setProtocol(data[2]);
 
 		while (line != null && !line.isEmpty()) {
-			System.out.println(line);
 			line = buff.readLine();
-			String[] headerData = line.split(":");
+			System.out.println(line);
+
+			// Read all the header data and add it to the HashMap
+			String[] headerData = line.split(": ");
 			if (headerData.length != 2) {
-				throw new IOException("Cannot Parse Headers.");
+				//Host contains "HostName:Port"
+				if (headerData[0].equals("Host")) {
+					System.out.println("Found host");
+					headerData[1] = headerData[1] + ":" + headerData[2];
+				}
+				//The end of HTTP headers
+				if (headerData[0].equals("")) {
+					return request;
+				} else {
+					System.out.println("Header not parsed: " + headerData[0]);
+					throw new IOException("Cannot Parse Headers. ");
+				}
 			}
 			headers.put(headerData[0], headerData[1]);
 		}
-		while(buff.ready()){
+		
+		//Read body of the the http request if present
+		while (buff.ready()) {
 			line = buff.readLine();
 			body.add(line);
 		}
@@ -82,16 +109,16 @@ public class HttpRequest {
 	public static void setPath(String path) {
 		HttpRequest.path = path;
 	}
-	
+
 	@Override
 	public String toString() {
 		String httpStringRequest = method + "\n" + path + "\n" + protocol;
-		for(String key: headers.keySet()){
+		for (String key : headers.keySet()) {
 			httpStringRequest += key + ": " + headers.get(key);
 		}
-		if(body != null && body.size() > 0){
-			for(String value: body)
-			httpStringRequest += value + "\n";
+		if (body != null && body.size() > 0) {
+			for (String value : body)
+				httpStringRequest += value + "\n";
 		}
 		return httpStringRequest;
 	}

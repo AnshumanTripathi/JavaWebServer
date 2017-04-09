@@ -1,5 +1,11 @@
 package com.java.threadpool;
 
+/*
+ * Author: Anshuman Tripathi
+ * 
+ * Thread pool contextual data that can be used by the pool to maintain its state
+ */
+
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 

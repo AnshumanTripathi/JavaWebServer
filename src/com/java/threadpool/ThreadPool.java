@@ -1,5 +1,12 @@
 package com.java.threadpool;
 
+/*
+ * Author: Anshuman Tripathi
+ * 
+ * Thread Pool implementation in using blocking queues. 
+ * Tasks are enqueued in the queue are dequeued when threads completes its execution
+ */
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;

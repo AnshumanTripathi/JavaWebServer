@@ -1,5 +1,12 @@
 package com.java.threadpool;
 
+/*
+ * Author: Anshuman Tripathi
+ * 
+ * Implementation of PoolThreads that run in the thread pool and dequeue tasks from the taskQueue
+ * 
+ */
+
 import java.util.concurrent.BlockingQueue;
 
 public class PoolThread implements Runnable {
